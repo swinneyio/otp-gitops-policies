@@ -1,0 +1,54 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: aws-storage-nodes
+  namespace: rhacm-policies
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: ocp-storage-machinepool
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: hive.openshift.io/v1
+                kind: MachinePool
+                metadata:
+                  name: '{{ fromClusterClaim \"aws-cluster\" }}-storage'
+                  labels:
+                    machine.openshift.io/cluster-api-machine-role: infra
+                    machine.openshift.io/cluster-api-machine-type: infra
+                    node-role.kubernetes.io/infra: ""
+                    cluster.ocs.openshift.io/openshift-storage: ""
+                  namespace: '{{ fromClusterClaim \"aws-cluster\" }}'
+                spec:
+                  clusterDeploymentRef:
+                    name: '{{ fromClusterClaim \"aws-cluster\" }}'
+                  name: '{{ fromClusterClaim \"aws-cluster\" }}'
+                  platform:
+                    aws:
+                      rootVolume:
+                        size: 120
+                        iops: 4000 
+                        type: gp3
+                      type: m5.4xlarge
+                  replicas: 3
+                  taints:
+                    - key: node-role.kubernetes.io/infra
+                      value: reserved
+                      effect: NoExecute
+                    - key: node-role.kubernetes.io/infra
+                      value: reserved
+                      effect: NoSchedule
+                    - key: node.ocs.openshift.io/storage
+                      value: "true"
+                      effect: NoSchedule
+          pruneObjectBehavior: None

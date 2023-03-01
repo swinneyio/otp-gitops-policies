@@ -1,0 +1,16 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: placement-rules-pg
+policyDefaults:
+  namespace: rhacm-policies
+  # Use the name of an existing placement rule
+  placement:
+    placementRuleName: local-cluster
+  remediationAction: enforce
+  severity: high
+  consolidateManifests: false # Put each object in its own ConfigurationPolicy in the Policy
+policies:
+  - name: placement-rules
+    manifests:
+      - path: placementrules

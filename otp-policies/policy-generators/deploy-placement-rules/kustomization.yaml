@@ -1,0 +1,6 @@
+generators:
+  - policy-generator-placement-rules.yaml
+commonLabels:
+  manifest-group: deploy-placement-rules
+commonAnnotations:
+  argocd.argoproj.io/compare-options: IgnoreExtraneous

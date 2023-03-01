@@ -1,0 +1,50 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: aws-infra-nodes
+  namespace: rhacm-policies
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: ocp-infra-machinepool
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: hive.openshift.io/v1
+                kind: MachinePool
+                metadata:
+                  name: '{{ fromClusterClaim \"aws-cluster\" }}-infra'
+                  labels:
+                    machine.openshift.io/cluster-api-machine-role: infra
+                    machine.openshift.io/cluster-api-machine-type: infra
+                    node-role.kubernetes.io/infra: ""
+                  namespace: '{{ fromClusterClaim \"aws-cluster\" }}'
+                spec:
+                  clusterDeploymentRef:
+                    name: '{{ fromClusterClaim \"aws-cluster\" }}'
+                  name: '{{ fromClusterClaim \"aws-cluster\" }}'
+                  platform:
+                    aws:
+                      rootVolume:
+                        size: 120
+                        iops: 4000 
+                        type: gp3
+                      type: m5.2xlarge
+                  replicas: 2
+                  taints:
+                    - key: node-role.kubernetes.io/infra
+                      value: reserved
+                      effect: NoExecute
+                    - key: node-role.kubernetes.io/infra
+                      value: reserved
+                      effect: NoSchedule
+          pruneObjectBehavior: None

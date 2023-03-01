@@ -1,0 +1,6 @@
+generators:
+  - policy-generator-lso.yaml
+commonLabels:
+  manifest-group: install-lso-operator
+commonAnnotations:
+  argocd.argoproj.io/compare-options: IgnoreExtraneous

@@ -1,0 +1,13 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: install-openshift-serverless-pg
+policyDefaults:
+  namespace: rhacm-policies
+  placement:
+    placementRuleName: clusterset-equals-dev
+  remediationAction: enforce
+policies:
+  - name: install-openshift-serverless
+    manifests:
+      - path: subscriptions

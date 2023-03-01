@@ -1,0 +1,16 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: install-openshift-gitops-pg
+policyDefaults:
+  namespace: rhacm-policies
+  placement:
+    placementRuleName: all-openshift-clusters-not-local
+  remediationAction: enforce
+  severity: high
+orderManifests: true
+policies:
+  - name: install-openshift-gitops
+    manifests:
+      - path: subscriptions
+      - path: manifests/argocd-instance

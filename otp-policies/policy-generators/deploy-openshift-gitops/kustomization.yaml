@@ -1,0 +1,5 @@
+generators:
+  - policy-generator-openshift-gitops.yaml
+commonAnnotations:
+  argocd.argoproj.io/compare-options: IgnoreExtraneous
+

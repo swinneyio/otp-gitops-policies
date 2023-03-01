@@ -1,0 +1,19 @@
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: clusterset-equals-dev
+  namespace: rhacm-policies
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: cluster.open-cluster-management.io/clusterset
+        operator: "In"
+        values:
+        - dev
+      - key: local-cluster
+        operator: "NotIn"
+        values:
+        - "true"
